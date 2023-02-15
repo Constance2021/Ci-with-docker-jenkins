@@ -1,0 +1,29 @@
+pipeline {
+    agent any
+
+    stages {
+        stage('Checkout') {
+            steps {
+                checkout([$class: 'GitSCM', branches: [[name: 'main']], extensions: [], userRemoteConfigs: [[url: 'https://github.com/Constance2021/ci_with_docker.git']]])
+            }
+        }
+        stage('Build') {
+            steps {
+                echo "building"
+                bat 'docker build -t jenk-image .'
+            }
+        }
+        stage('Test') {
+            steps {
+                echo "Testing"
+                bat 'C:/Users/HP/AppData/Local/Programs/Python/Python310/python -m unittest'
+            }
+        }
+         stage('Deploy') {
+            steps {
+                echo "deploying"
+                bat 'docker run jenk-image'
+            }
+        }
+    }
+}
