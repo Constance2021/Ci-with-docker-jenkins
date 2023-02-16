@@ -4,42 +4,44 @@ pipeline {
     IMAGE_TAG = "ci-docker:latest"
   }
   stages {
+
     stage('Checkout') {
       steps {
         checkout scm
-      }
-    }
-    stage('Create Staging Branch') {
-      steps {
-        bat 'git checkout -b staging'
-        bat 'git push origin staging'
+        withCredentials([sshUserPrivateKey(credentialsId:"jenkins_key_access", keyFileVariable: "SSH_KEY")]) {
+
+         sh "git branch staging" 
+         sh "git checkout staging"
+         sh 'GIT_SSH_COMMAND="ssh -i $SSH_KEY" git push origin staging '
+        }
       }
     }
     stage('Install Dependencies') {
       steps {
-        bat 'pip install -r requirements.txt'
+        sh 'pip install -r requirements.txt'
       }
     }
     stage('Test') {
       steps {
-        bat 'python -m pytest'
+        sh 'python -m pytest'
       }
     }
     stage('Build and Push Docker Image') {
       steps {
         withCredentials([usernamePassword(credentialsId: 'docker-hub', usernameVariable: 'somala28', passwordVariable: 'MadoClovis123')]) {
-          bat 'docker build -t $IMAGE_TAG .'
-          bat 'docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD'
-          bat 'docker push $IMAGE_TAG'
+          sh 'docker build -t $IMAGE_TAG .'
+          sh 'docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD'
+          sh 'docker push $IMAGE_TAG'
         }
       }
     }
     stage('Merge to Main Branch') {
       steps {
-        bat 'git checkout main'
-        bat 'git merge staging'
-        bat 'git push origin main'
+        sh 'git checkout main'
+        sh 'git merge staging'
+        sh 'git push origin main'
       }
     }
+
   }
 }
