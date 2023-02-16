@@ -11,34 +11,34 @@ pipeline {
     }
     stage('Create Staging Branch') {
       steps {
-        sh 'git checkout -b staging'
-        sh 'git push origin staging'
+        bat 'git checkout -b staging'
+        bat 'git push origin staging'
       }
     }
     stage('Install Dependencies') {
       steps {
-        sh 'pip install -r requirements.txt'
+        bat 'pip install -r requirements.txt'
       }
     }
     stage('Test') {
       steps {
-        sh 'python -m pytest'
+        bat 'python -m pytest'
       }
     }
     stage('Build and Push Docker Image') {
       steps {
         withCredentials([usernamePassword(credentialsId: 'docker-hub', usernameVariable: 'somala28', passwordVariable: 'MadoClovis123')]) {
-          sh 'docker build -t $IMAGE_TAG .'
-          sh 'docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD'
-          sh 'docker push $IMAGE_TAG'
+          bat 'docker build -t $IMAGE_TAG .'
+          bat 'docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD'
+          bat 'docker push $IMAGE_TAG'
         }
       }
     }
     stage('Merge to Main Branch') {
       steps {
-        sh 'git checkout main'
-        sh 'git merge staging'
-        sh 'git push origin main'
+        bat 'git checkout main'
+        bat 'git merge staging'
+        bat 'git push origin main'
       }
     }
   }
