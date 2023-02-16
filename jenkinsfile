@@ -1,29 +1,45 @@
 pipeline {
-    agent any
-
-    stages {
-        stage('Checkout') {
-            steps {
-                checkout([$class: 'GitSCM', branches: [[name: 'main']], extensions: [], userRemoteConfigs: [[url: 'https://github.com/Constance2021/ci_with_docker.git']]])
-            }
-        }
-        stage('Build') {
-            steps {
-                echo "building"
-                bat 'docker build -t jenk-image .'
-            }
-        }
-        stage('Test') {
-            steps {
-                echo "Testing"
-                bat 'C:/Users/HP/AppData/Local/Programs/Python/Python310/python -m unittest'
-            }
-        }
-         stage('Deploy') {
-            steps {
-                echo "deploying"
-                bat 'docker run jenk-image'
-            }
-        }
+  agent any
+  environment {
+    IMAGE_TAG = "ci-docker:latest"
+  }
+  stages {
+    stage('Checkout') {
+      steps {
+        checkout scm
+      }
     }
+    stage('Create Staging Branch') {
+      steps {
+        sh 'git checkout -b staging'
+        sh 'git push origin staging'
+      }
+    }
+    stage('Install Dependencies') {
+      steps {
+        sh 'pip install -r requirements.txt'
+      }
+    }
+    stage('Test') {
+      steps {
+        sh 'python -m pytest'
+      }
+    }
+    stage('Build and Push Docker Image') {
+      steps {
+        withCredentials([usernamePassword(credentialsId: 'docker-hub', usernameVariable: 'somala28', passwordVariable: 'MadoClovis123')]) {
+          sh 'docker build -t $IMAGE_TAG .'
+          sh 'docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD'
+          sh 'docker push $IMAGE_TAG'
+        }
+      }
+    }
+    stage('Merge to Main Branch') {
+      steps {
+        sh 'git checkout main'
+        sh 'git merge staging'
+        sh 'git push origin main'
+      }
+    }
+  }
 }
