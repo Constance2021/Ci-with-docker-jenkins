@@ -21,9 +21,9 @@ pipeline {
 }
    stage('Build and Push Docker Image to dockerhub') {
       step{
-          bat 'docker build -t jenkins .'
-          bat 'docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD'
-          bat 'docker push $IMAGE_TAG'
+          bat 'docker build -t jenkins . -t somala28/ci-docker:latest'
+          //bat 'docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD'
+          bat 'docker push somala28/ci-docker:latest'
         
       }
     }
