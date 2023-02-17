@@ -11,9 +11,9 @@ pipeline {
        
       }
     }
-    stage('Ceating the stage Checkout') {
+    stage('Creating the stage Checkout') {
   steps {
-    withCredentials([sshUserPrivateKey(credentialsId:"jenkins_key_access", keyFileVariable: "SSH_KEY")]) {
+    withCredentials([sshUserPrivateKey(credentialsId:"github_s", keyFileVariable: "SSH_KEY")]) {
 
          sh "git branch staging" 
          sh "git checkout staging"
