@@ -14,10 +14,8 @@ pipeline {
    stage('Creating the staging branch') {
   steps {
     withCredentials([sshUserPrivateKey(credentialsId:"github_s", keyFileVariable: "SSH_KEY")]) {
-      // Delete the existing staging branch
-      bat "git push origin --delete staging"
-      // Recreate the staging branch
-      bat "git checkout -b staging"
+      
+      bat "git checkout staging"
       bat 'GIT_SSH_COMMAND="ssh -i $SSH_KEY" git push -u origin staging'
     }
   }
