@@ -28,7 +28,7 @@ pipeline {
 
     stage('Test') {
       steps {
-        bat 'python3 -m pip install flask'
+        bat 'C:/Users/HP/AppData/Local/Programs/Python/Python310/python -m pip install flask'
         bat 'C:/Users/HP/AppData/Local/Programs/Python/Python310/python -m unittest'
       }
     }
