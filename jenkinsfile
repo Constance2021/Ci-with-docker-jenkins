@@ -19,7 +19,7 @@ pipeline {
     }
   }
 }
-   stage('Build and Push Docker Image') {
+   stage('Build and Push Docker Image to dockerhub') {
       steps {
         withCredentials([usernamePassword(credentialsId: 'docker-hub', usernameVariable: 'DOCKER_HUB_USERNAME', passwordVariable: 'DOCKER_HUB_ACCESS_TOKEN')]) {
           bat 'docker build -t $IMAGE_TAG .'
