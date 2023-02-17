@@ -34,10 +34,14 @@ pipeline {
 
     stage('Merge to Main Branch') {
       steps {
+            sshagent(credentials: ['github_ssh']){
             bat 'git checkout main'
             bat 'git pull origin main'
             bat 'git merge staging_branch'
-            bat 'git push origin main'   
+            bat 'git push origin main' 
+
+      }
+              
       }
 
   }
