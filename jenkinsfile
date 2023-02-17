@@ -15,21 +15,21 @@ pipeline {
   steps {
     withCredentials([sshUserPrivateKey(credentialsId:"github_s", keyFileVariable: "SSH_KEY")]) {
 
-         sh "git branch staging" 
-         sh "git checkout staging"
-         sh 'GIT_SSH_COMMAND="ssh -i $SSH_KEY" git push origin staging '
+         bat "git branch staging" 
+         bat "git checkout staging"
+         bat 'GIT_SSH_COMMAND="ssh -i $SSH_KEY" git push origin staging '
         }
   }
 }
 
     stage('Install Dependencies') {
       steps {
-        sh 'pip install -r requirements.txt'
+        bat 'pip install -r requirements.txt'
       }
     }
     stage('Test') {
       steps {
-        sh 'python -m unittest'
+        bat 'python -m unittest'
       }
     }
     stage('Build and Push Docker Image') {
