@@ -7,17 +7,21 @@ pipeline {
 
     stage('Checkout') {
       steps {
+        sshagent(credentials: ['github_s']){
         checkout scm 
+      }
       }
     }
    stage('Creating the staging branch') {
     steps {
+      sshagent(credentials: ['github_s']){
       withCredentials([sshUserPrivateKey(credentialsId:"github_s", keyFileVariable: "SSH_KEY")]) {
       bat "git branch --delete staging_branch"
       bat "git checkout -b staging_branch"
     }
   }
 }
+   }
    stage('Build and Push Docker Image to dockerhub') {
       steps{
           bat 'docker build -t jenkins . -t somala28/ci-docker:latest'
