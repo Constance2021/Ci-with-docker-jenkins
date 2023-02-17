@@ -15,8 +15,8 @@ pipeline {
   steps {
     withCredentials([sshUserPrivateKey(credentialsId:"github_s", keyFileVariable: "SSH_KEY")]) {
       
-      bat "git checkout staging"
-      bat 'GIT_SSH_COMMAND="ssh -i $SSH_KEY" git push -u origin staging'
+      bat "git checkout -b staging"
+      // bat 'GIT_SSH_COMMAND="ssh -i $SSH_KEY" git push -u origin staging'
     }
   }
 }
