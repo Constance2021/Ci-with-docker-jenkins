@@ -35,17 +35,17 @@ pipeline {
     stage('Build and Push Docker Image') {
       steps {
         withCredentials([usernamePassword(credentialsId: 'docker-hub', usernameVariable: 'DOCKER_HUB_USERNAME', passwordVariable: 'DOCKER_HUB_ACCESS_TOKEN')]) {
-          sh 'docker build -t $IMAGE_TAG .'
-          sh 'docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD'
-          sh 'docker push $IMAGE_TAG'
+          bat 'docker build -t $IMAGE_TAG .'
+          bat 'docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD'
+          bat 'docker push $IMAGE_TAG'
         }
       }
     }
     stage('Merge to Main Branch') {
       steps {
-        sh 'git checkout main'
-        sh 'git merge staging'
-        sh 'git push origin main'
+        bat 'git checkout main'
+        bat 'git merge staging'
+        bat 'git push origin main'
       }
     }
 
