@@ -23,7 +23,7 @@ pipeline {
       steps{
           bat 'docker build -t jenkins . -t somala28/ci-docker:latest'
           //bat 'docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD'
-          bat 'docker push somala28/ci-docker:latest'
+          bat 'docker run -d jenkins'
         
       }
     }
