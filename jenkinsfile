@@ -8,20 +8,17 @@ pipeline {
     stage('Checkout') {
       steps {
         checkout scm
-        withCredentials([sshUserPrivateKey(credentialsId:"jenkins_key_access", keyFileVariable: "SSH_KEY")]) {
+       
+      }
+    }
+    stage('Ceating the stage Checkout') {
+  steps {
+    withCredentials([sshUserPrivateKey(credentialsId:"jenkins_key_access", keyFileVariable: "SSH_KEY")]) {
 
          sh "git branch staging" 
          sh "git checkout staging"
          sh 'GIT_SSH_COMMAND="ssh -i $SSH_KEY" git push origin staging '
         }
-      }
-    }
-    stage('Checkout') {
-  steps {
-    checkout scm
-    withCredentials([sshUserPrivateKey(credentialsId:"jenkins_key_access", keyFileVariable: "SSH_KEY")]) {
-      sh "git checkout -b staging"
-    }
   }
 }
 
@@ -32,7 +29,7 @@ pipeline {
     }
     stage('Test') {
       steps {
-        sh 'python -m pytest'
+        sh 'python -m unittest'
       }
     }
     stage('Build and Push Docker Image') {
