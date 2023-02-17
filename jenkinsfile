@@ -15,14 +15,12 @@ pipeline {
       withCredentials([sshUserPrivateKey(credentialsId:"github_s", keyFileVariable: "SSH_KEY")]) {
       bat "git branch --delete staging_branch"
       bat "git checkout -b staging_branch"
-      // bat 'GIT_SSH_COMMAND="ssh -i $SSH_KEY" git push -u origin staging'
     }
   }
 }
    stage('Build and Push Docker Image to dockerhub') {
       steps{
           bat 'docker build -t jenkins . -t somala28/ci-docker:latest'
-          //bat 'docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD'
           bat 'docker run -d jenkins'
         
       }
