@@ -12,11 +12,9 @@ pipeline {
     }
     stage('Creating the staging branch') {
     steps {
-      sshagent(credentials: ['github_s']){
       bat "git branch --delete staging_branch"
       bat "git checkout -b staging_branch"
-  }
-}
+        }
     }
     stage('Build and Push Docker Image to dockerhub') {
       steps{
