@@ -16,6 +16,15 @@ pipeline {
         }
       }
     }
+    stage('Checkout') {
+  steps {
+    checkout scm
+    withCredentials([sshUserPrivateKey(credentialsId:"jenkins_key_access", keyFileVariable: "SSH_KEY")]) {
+      sh "git checkout -b staging"
+    }
+  }
+}
+
     stage('Install Dependencies') {
       steps {
         sh 'pip install -r requirements.txt'
@@ -28,7 +37,7 @@ pipeline {
     }
     stage('Build and Push Docker Image') {
       steps {
-        withCredentials([usernamePassword(credentialsId: 'docker-hub', usernameVariable: 'somala28', passwordVariable: 'MadoClovis123')]) {
+        withCredentials([usernamePassword(credentialsId: 'docker-hub', usernameVariable: 'DOCKER_HUB_USERNAME', passwordVariable: 'DOCKER_HUB_ACCESS_TOKEN')]) {
           sh 'docker build -t $IMAGE_TAG .'
           sh 'docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD'
           sh 'docker push $IMAGE_TAG'
