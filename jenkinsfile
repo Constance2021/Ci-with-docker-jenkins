@@ -13,10 +13,8 @@ pipeline {
     stage('Creating the staging branch') {
     steps {
       sshagent(credentials: ['github_s']){
-      withCredentials([sshUserPrivateKey(credentialsId:"github_s", keyFileVariable: "SSH_KEY")]) {
       bat "git branch --delete staging_branch"
       bat "git checkout -b staging_branch"
-    }
   }
 }
     }
