@@ -33,7 +33,8 @@ pipeline {
 
     stage('Merge to Main Branch') {
       steps {
-        sshagent(credentials: ['github_s']){
+        
+    withCredentials([sshUserPrivateKey(credentialsId:"github_s", keyFileVariable: "SSH_KEY")]) {
             bat 'git checkout main'
             bat 'git pull origin main'
             bat 'git merge staging_branch'
