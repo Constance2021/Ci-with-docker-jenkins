@@ -7,46 +7,40 @@ pipeline {
 
     stage('Checkout') {
       steps {
-        checkout scm
-       
+        checkout scm 
       }
     }
-   stage('Creating the staging branch') {
-  steps {
-    withCredentials([sshUserPrivateKey(credentialsId:"github_s", keyFileVariable: "SSH_KEY")]) {
+    stage('Creating the staging branch') {
+    steps {
 
-      bat "git branch --delete staging"
-      bat "git checkout -b staging"
-      // bat 'GIT_SSH_COMMAND="ssh -i $SSH_KEY" git push -u origin staging'
-    }
+      bat "git branch --delete staging_branch"
+      bat "git checkout -b staging_branch"
   }
 }
-
-
-    stage('Install Dependencies') {
-      steps {
-        bat 'pip install -r requirements.txt'
+    stage('Build and Push Docker Image to dockerhub') {
+      steps{
+          bat 'docker build -t jenkins . -t somala28/ci-docker:latest'
+          bat 'docker run -d jenkins'
+        
       }
     }
+
     stage('Test') {
       steps {
-        bat 'python -m unittest'
+        bat 'C:/Users/HP/AppData/Local/Programs/Python/Python310/python -m pip install flask'
+        bat 'C:/Users/HP/AppData/Local/Programs/Python/Python310/python -m unittest'
       }
     }
-    stage('Build and Push Docker Image') {
-      steps {
-        withCredentials([usernamePassword(credentialsId: 'docker-hub', usernameVariable: 'DOCKER_HUB_USERNAME', passwordVariable: 'DOCKER_HUB_ACCESS_TOKEN')]) {
-          bat 'docker build -t $IMAGE_TAG .'
-          bat 'docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD'
-          bat 'docker push $IMAGE_TAG'
-        }
-      }
-    }
+
     stage('Merge to Main Branch') {
       steps {
-        bat 'git checkout main'
-        bat 'git merge staging'
-        bat 'git push origin main'
+        sshagent(credentials: ['jenkins']){
+            bat 'git checkout main'
+            bat 'git pull origin main'
+            bat 'git merge staging_branch'
+            bat 'git push origin main'
+        }
+        
       }
     }
 
