@@ -13,7 +13,7 @@ pipeline {
     stage('Creating the staging branch') {
     steps {
 
-      bat "git branch -D staging_branch"
+      //bat "git branch -D staging_branch"
       bat "git checkout -b staging_branch"
   }
 }
