@@ -34,11 +34,12 @@ pipeline {
 
     stage('Merge to Main Branch') {
       steps {
-        bat 'git checkout main'
+            bat 'git checkout main'
             bat 'git pull origin main'
-            bat 'git merge staging_branch'
-        withCredentials([sshUserPrivateKey(credentialsId:"jenkins", keyFileVariable: "SSH_KEY")]){
             
+        withCredentials([sshUserPrivateKey(credentialsId:"jenkins", keyFileVariable: "SSH_KEY")]){
+
+            bat 'git merge staging_branch'  
             bat 'git push origin main' 
         }
         
