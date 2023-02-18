@@ -31,10 +31,10 @@ pipeline {
       steps {
         bat 'git checkout main'
         bat 'git pull origin main'
-        withCredentials([sshUserPrivateKey(credentialsId: 'github_ssh', keyFileVariable: 'SSH_KEY', passphraseVariable: 'SSH_PASSPHRASE', usernameVariable: 'github_ssh')]) {
+        withCredentials([sshUserPrivateKey(credentialsId: 'github_ssh', keyFileVariable: 'sshkey', passphraseVariable: 'marie', usernameVariable: 'github_ssh')]) {
           bat "echo '%SSH_KEY%' > key"
-          bat "ssh-keygen -y -f key -P $marie > key.pub"
-          bat "ssh-keyscan -H https://github.com/Constance2021/Ci-with-docker-jenkins >> $HOME/.ssh/known_hosts"
+          bat "ssh-keygen -y -f key -P marie > key.pub"
+          bat "ssh-keyscan -H https://github.com/Constance2021/Ci-with-docker-jenkins >> C:/Users/HP/.ssh/known_hosts"
           bat 'ssh-add key'
           bat 'ssh -o StrictHostKeyChecking=no git@github.com:Constance2021/Ci-with-docker-jenkins.git'
           bat 'git push -u origin main'
