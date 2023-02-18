@@ -17,7 +17,6 @@ pipeline {
       bat "git checkout -b staging_branch"
   }
 }
-    }
     stage('Build and Push Docker Image to dockerhub') {
       steps{
           bat 'docker build -t jenkins . -t somala28/ci-docker:latest'
@@ -46,4 +45,4 @@ pipeline {
     }
 
   }
-
+}
