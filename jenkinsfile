@@ -4,42 +4,46 @@ pipeline {
     IMAGE_TAG = "ci-docker:latest"
   }
   stages {
+
     stage('Checkout') {
       steps {
         checkout scm 
       }
     }
     stage('Creating the staging branch') {
-      steps {
-        bat "git branch --delete staging_branch"
-        bat "git checkout -b staging_branch"
-      }
-    }
+    steps {
+      bat "git branch --delete staging_branch"
+      bat "git checkout -b staging_branch"
+  }
+}
+    
     stage('Build and Push Docker Image to dockerhub') {
       steps {
-        bat 'docker build -t jenkins . -t somala28/ci-docker:latest'
-        bat 'docker run -d jenkins'
+          bat 'docker build -t jenkins . -t somala28/ci-docker:latest'
+          bat 'docker run -d jenkins'
+        
       }
     }
+
     stage('Test') {
       steps {
         bat 'C:/Users/HP/AppData/Local/Programs/Python/Python310/python -m pip install flask'
         bat 'C:/Users/HP/AppData/Local/Programs/Python/Python310/python -m unittest'
       }
     }
+
     stage('Merge to Main Branch') {
       steps {
-        bat 'git checkout main'
-        bat 'git pull origin main'
-        withCredentials([sshUserPrivateKey(credentialsId: 'github_ssh', keyFileVariable: 'sshkey', passphraseVariable: 'marie', usernameVariable: 'github_ssh')]) {
-          bat "echo '%SSH_KEY%' > key"
-          bat "ssh-keygen -y -f key -P marie > key.pub"
-          bat "ssh-keyscan -H https://github.com/Constance2021/Ci-with-docker-jenkins >> C:/Users/HP/.ssh/known_hosts"
-          bat 'ssh-add key'
-          bat 'ssh -o StrictHostKeyChecking=no git@github.com:Constance2021/Ci-with-docker-jenkins.git'
-          bat 'git push -u origin main'
-        }
+            bat 'git checkout main'
+            sshagent(credentials: ['jenkins']){
+            bat 'git pull origin main'
+            bat 'git merge staging_branch'
+            bat 'git push origin main' 
+
       }
-    }
+              
+      }
+
   }
+}
 }
