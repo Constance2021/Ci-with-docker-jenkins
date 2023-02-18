@@ -37,7 +37,7 @@ pipeline {
             bat 'git checkout main'
             bat 'git pull origin main'
             bat 'git merge staging_branch'
-            bat 'git push origin main'
+            bat ' GIT_SSH_COMMAND= "ssh -i $SS_KEY " git push origin main'
 
           } 
         }
