@@ -44,9 +44,8 @@ pipeline {
             bat 'ssh -o StrictHostKeyChecking=no git@github.com'
             bat 'git push -u origin main'
 
+        }
       }
-
-}
-}
+    }
   }
 }
