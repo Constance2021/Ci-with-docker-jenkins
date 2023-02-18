@@ -4,46 +4,41 @@ pipeline {
     IMAGE_TAG = "ci-docker:latest"
   }
   stages {
-
     stage('Checkout') {
       steps {
         checkout scm 
       }
     }
     stage('Creating the staging branch') {
-    steps {
-      bat "git branch --delete staging_branch"
-      bat "git checkout -b staging_branch"
-  }
-}
-    
-    stage('Build and Push Docker Image to dockerhub') {
       steps {
-          bat 'docker build -t jenkins . -t somala28/ci-docker:latest'
-          bat 'docker run -d jenkins'
-        
+        bat "git branch --delete staging_branch"
+        bat "git checkout -b staging_branch"
       }
     }
-
+    stage('Build and Push Docker Image to dockerhub') {
+      steps {
+        bat 'docker build -t jenkins . -t somala28/ci-docker:latest'
+        bat 'docker run -d jenkins'
+      }
+    }
     stage('Test') {
       steps {
         bat 'C:/Users/HP/AppData/Local/Programs/Python/Python310/python -m pip install flask'
         bat 'C:/Users/HP/AppData/Local/Programs/Python/Python310/python -m unittest'
       }
     }
-
     stage('Merge to Main Branch') {
       steps {
-            sshagent(credentials: ['github_ssh']){
-            bat 'git checkout main'
-            bat 'git pull origin main'
-            bat 'git merge staging_branch'
-            bat 'git push origin main' 
-
+        bat 'git checkout main'
+        bat 'git pull origin main'
+        withCredentials([sshUserPrivateKey(credentialsId: 'github_ssh', keyFileVariable: 'SSH_KEY', passphraseVariable: 'SSH_PASSPHRASE', usernameVariable: 'SSH_USERNAME')]) {
+          bat "echo '%SSH_KEY%' > key"
+          bat "ssh-keygen -y -f key -P $SSH_PASSPHRASE > key.pub"
+          bat "ssh-keyscan -H github.com >> $HOME/.ssh/known_hosts"
+          bat 'ssh-add key'
+          bat 'git push -u origin main'
+        }
       }
-              
-      }
-
+    }
   }
-}
 }
