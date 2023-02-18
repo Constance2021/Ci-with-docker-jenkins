@@ -12,10 +12,12 @@ pipeline {
     }
     stage('Creating the staging branch') {
     steps {
+
       bat "git branch --delete staging_branch"
       bat "git checkout -b staging_branch"
   }
 }
+    }
     stage('Build and Push Docker Image to dockerhub') {
       steps{
           bat 'docker build -t jenkins . -t somala28/ci-docker:latest'
@@ -33,16 +35,15 @@ pipeline {
 
     stage('Merge to Main Branch') {
       steps {
-        withCredentials([sshUserPrivateKey(credentialsId:"jenkins", keyFileVariable: "SSH_KEY")]){
+        sshagent(credentials: ['jenkins']){
             bat 'git checkout main'
             bat 'git pull origin main'
             bat 'git merge staging_branch'
-            bat ' GIT_SSH_COMMAND= "ssh -i $SS_KEY " git push origin main'
-
-          } 
+            bat 'git push origin main'
         }
         
+      }
     }
 
   }
-}
+
