@@ -35,7 +35,7 @@ pipeline {
     stage('Merge to Main Branch') {
       steps {
             bat 'git checkout main'
-            sshagent(credentials: ['jenkins']){
+            sshagent(credentials: ['anobienvenue@gmail.com']){
             bat 'git pull origin main'
             bat 'git merge staging_branch'
             bat 'git push origin main' 
