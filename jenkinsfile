@@ -32,7 +32,7 @@ pipeline {
       }
     }
 
-    stage('Merge to Main Branch') {
+    stage('Merge to main mranch') {
       steps {
         sshagent(credentials: ['jenkins']){
             bat 'git checkout main'
