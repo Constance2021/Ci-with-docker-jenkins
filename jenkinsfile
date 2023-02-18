@@ -13,7 +13,7 @@ pipeline {
     stage('Creating the staging branch') {
     steps {
 
-      bat "git branch --delete staging_branch"
+      bat "git branch -D staging_branch"
       bat "git checkout -b staging_branch"
   }
 }
@@ -32,13 +32,18 @@ pipeline {
       }
     }
 
-    stage('Merge to main mranch') {
+    stage('Merge to Main Branch') {
       steps {
-        sshagent(credentials: ['jenkins']){
             bat 'git checkout main'
             bat 'git pull origin main'
-            bat 'git merge staging_branch'
-            bat 'git push origin main'
+            
+          withCredentials([sshUserPrivateKey(credentialsId: 'jenkins', keyFileVariable: 'SSH_KEY', passphraseVariable: 'SSH_PASSPHRASE', usernameVariable: 'SSH_USERNAME')]) {
+          bat "echo '%SSH_KEY%' > key"
+          bat "ssh-keygen -y -f key -P $SSH_PASSPHRASE > key.pub"
+          bat "ssh-keyscan -H https://github.com/Constance2021/Ci-with-docker-jenkins >> C:/Users/HP/.ssh/known_hosts"
+          bat 'ssh-add key'
+          bat 'ssh -o StrictHostKeyChecking=no git@github.com:Constance2021/Ci-with-docker-jenkins.git'
+          bat 'git push -u origin main'
         }
         
       }
