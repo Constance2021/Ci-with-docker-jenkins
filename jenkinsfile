@@ -34,13 +34,12 @@ pipeline {
 
     stage('Merge to Main Branch') {
       steps {
-        /*sshagent(credentials: ['jenkins']){
+        sshagent(credentials: ['jenkins']){
             bat 'git checkout main'
             bat 'git pull origin main'
             bat 'git merge staging_branch'
             bat 'git push origin main'
-        }*/
-        echo "welcome"
+        }
         
       }
     }
