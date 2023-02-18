@@ -37,11 +37,7 @@ pipeline {
             bat 'git checkout main'
             bat 'git pull origin main'
             
-<<<<<<< HEAD
           withCredentials([sshUserPrivateKey(credentialsId: 'jenkins', keyFileVariable: 'SSH_KEY', passphraseVariable: 'SSH_PASSPHRASE', usernameVariable: 'SSH_USERNAME')]) {
-=======
-         withCredentials([sshUserPrivateKey(credentialsId: 'jenkins', keyFileVariable: 'SSH_KEY', passphraseVariable: 'SSH_PASSPHRASE', usernameVariable: 'SSH_USERNAME')]) {
->>>>>>> be2fe2ef6d34fd590ab2da33744cffba6643bd66
           bat "echo '%SSH_KEY%' > key"
           bat "ssh-keygen -y -f key -P $SSH_PASSPHRASE > key.pub"
           bat "ssh-keyscan -H https://github.com/Constance2021/Ci-with-docker-jenkins >> C:/Users/HP/.ssh/known_hosts"
