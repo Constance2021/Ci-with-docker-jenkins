@@ -43,6 +43,7 @@ pipeline {
           bat "ssh-keyscan -H https://github.com/Constance2021/Ci-with-docker-jenkins >> C:/Users/HP/.ssh/known_hosts"
           bat 'ssh-add key'
           bat 'ssh -o StrictHostKeyChecking=no git@github.com:Constance2021/Ci-with-docker-jenkins.git'
+          bat 'git add remote origin git@github.com:Constance2021/Ci-with-docker-jenkins.git'
           bat 'git push -u origin main'
         }
         
